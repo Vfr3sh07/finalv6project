@@ -1288,31 +1288,38 @@ function preloadImages(){
 }
 preloadImages();
 
-/* Inject static HTML images from IMAGES config on load */
+/* Inject static HTML images from IMAGES config */
 function injectStaticImages(){
   // Password screen
   const passImg=document.querySelector('.pass-pol img');
-  if(passImg){ passImg.src=IMAGES.password; passImg.onerror=()=>{ passImg.style.background='linear-gradient(135deg,#ffd6cc,#f4a261)'; passImg.src=''; }; }
+  if(passImg){
+    passImg.src=IMAGES.password;
+    passImg.onerror=function(){ this.onerror=null; this.style.background='linear-gradient(135deg,#ffd6cc,#f4a261)'; };
+  }
 
   // Photo reveal screen
   const revImg=document.querySelector('#reveal-pol img');
-  if(revImg){ revImg.src=IMAGES.reveal; revImg.onerror=()=>{ revImg.style.background='linear-gradient(135deg,#ffd6cc,#f4a261)'; revImg.src=''; }; }
+  if(revImg){
+    revImg.src=IMAGES.reveal;
+    revImg.onerror=function(){ this.onerror=null; this.style.background='linear-gradient(135deg,#ffd6cc,#f4a261)'; };
+  }
 
   // Soulmate scrapbook — three sm-pol img elements in order
   document.querySelectorAll('.sm-pol img').forEach((el,i)=>{
     if(!IMAGES.soulmate[i]) return;
     el.src=IMAGES.soulmate[i];
-    el.onerror=()=>{ el.style.background='linear-gradient(135deg,#ffd6cc,#c4a8e0)'; el.src=''; };
+    el.onerror=function(){ this.onerror=null; this.style.background='linear-gradient(135deg,#ffd6cc,#c4a8e0)'; };
   });
 
   // Envelope side strip — four env-strip-photo img elements in order
   document.querySelectorAll('.env-strip-photo img').forEach((el,i)=>{
     if(!IMAGES.envelope[i]) return;
     el.src=IMAGES.envelope[i];
-    el.onerror=()=>{ el.style.background='linear-gradient(135deg,#ffd6cc,#c4a8e0)'; el.src=''; };
+    el.onerror=function(){ this.onerror=null; this.style.background='linear-gradient(135deg,#ffd6cc,#c4a8e0)'; };
   });
 }
-document.addEventListener('DOMContentLoaded', injectStaticImages);
+/* Call directly — DOMContentLoaded already fired for inline scripts at body end */
+injectStaticImages();
 
 /* Keep PHOTOS pointing at IMAGES.memory for carousel + lightbox */
 const PHOTOS=IMAGES.memory;
@@ -1725,7 +1732,7 @@ function buildCarousel(){
     const card=document.createElement('div');card.className='pol-card';
     const img=document.createElement('img');
     img.src=p.src;img.alt=p.cap;img.loading='lazy';
-    img.onerror=function(){console.error('Carousel img failed:',p.src);this.style.background='linear-gradient(135deg,#ffd6cc,#f4a261)';this.removeAttribute('src');};
+    img.onerror=function(){this.onerror=null;console.error('Carousel img failed:',p.src);this.style.background='linear-gradient(135deg,#ffd6cc,#f4a261)';};
     const cap=document.createElement('div');cap.className='pol-caption';cap.textContent=p.cap;
     card.appendChild(img);card.appendChild(cap);
     card.addEventListener('click',()=>openLb(p.src,p.cap));
